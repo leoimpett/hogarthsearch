@@ -1,0 +1,149 @@
+<html>
+  <head>
+    <meta name="viewport" content="user-scalable=no, width=device-width, initial-scale=1, maximum-scale=1">
+
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script>
+
+    <link href="https://cdn.jsdelivr.net/npm/nanogallery2@3/dist/css/nanogallery2.min.css" rel="stylesheet" type="text/css">
+    <link href="style.css" rel="stylesheet" type="text/css">
+      
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/nanogallery2@3/dist/jquery.nanogallery2.min.js"></script>
+      
+  </head>
+  <body>
+
+
+     
+    <div id="searchHeader" class="split split-vertical">
+        <p> Visual Click-Through Search | go to <a href="SearchGallery.html">Search Gallery</a> | prototype 11.2020 by leoimpett </p>
+    </div>
+       
+        <div id="galleryWrapper-whole"> <div id="my_nanogallery2" class="split split-horizontal"></div></div>
+             
+   
+
+      
+      <script>
+      
+var figs = []   
+    
+jQuery(document).ready(function () {
+    
+        function shuffleAds(arr){       
+            for(var j, x, i = arr.length; i; j = parseInt(Math.random() * i), x = arr[--i], arr[i] = arr[j], arr[j] = x);
+            return arr;
+        }
+
+        
+    $.getJSON("YCBAsearch.json", function(myjson) {
+        
+        figs = shuffleAds(myjson);
+        
+        jQuery("#my_nanogallery2").nanogallery2({
+            items:figs.slice(0,100),
+            thumbnailBorderVertical: 3,
+            thumbnailBorderHorizontal: 3,
+            thumbnailLabel: {
+            position: "overImageOnBottom",
+            titleMultiLine: true
+            },      
+            galleryTheme: {
+                thumbnail : { background: '#999', borderColor: '#FFF' }
+              },
+            allowHTMLinData: true,
+            thumbnailDisplayOutsideScreen: false,
+            galleryDisplayMode: "moreButton",
+            galleryPaginationMode: 'numbers',
+            galleryDisplayMoreStep: 3,
+            galleryMaxRows: 5,
+            thumbnailAlignment: "fillWidth",
+            gallerySorting: "random",
+            galleryFilterTags: "title",
+            thumbnailLevelUp: true,
+            thumbnailOpenImage: true,
+            galleryResizeAnimation: false,
+            thumbnailLabel:     { display: true, valign: "middle", position: 'overImage', hideIcons: true, titleMultiLine: true },
+            thumbnailHoverEffect2: 'imageBlurOff|labelSlideUp|title_backgroundColor_rgba(255,255,255,0.0)_rgba(0,0,0,0.3)',
+            viewerTheme: "light",
+            
+            thumbnailWidth:  254,
+            thumbnailHeight: "auto",
+            itemsBaseURL:    'http://deliver.odai.yale.edu/content/id/',
+            locationHash:    false,
+            fnThumbnailOpen:  customLightBox
+        });
+        
+        
+        
+console.log("Gallery constructed, displaying")
+
+        
+    })
+        
+  
+    function customLightBox( items ) {
+        
+        
+        var NNids = items[0].customData.NNs
+        
+        NNids.unshift(items[0].customData.id)
+        
+        var searchResults = NNids.map(x => figs.find(y => y.customData.id === x.toString() )).filter(el => el !== undefined)
+
+        
+            jQuery("#my_nanogallery2").nanogallery2("destroy")
+        
+            jQuery("#my_nanogallery2").nanogallery2({
+                items:searchResults,
+                thumbnailBorderVertical: 3,
+                thumbnailBorderHorizontal: 3,
+                thumbnailLabel: {
+                position: "overImageOnBottom",
+                titleMultiLine: true
+                },      
+                galleryTheme: {
+                    thumbnail : { background: '#999', borderColor: '#FFF' }
+                  },
+                allowHTMLinData: true,
+                thumbnailDisplayOutsideScreen: false,
+                galleryDisplayMode: "moreButton",
+                galleryPaginationMode: 'numbers',
+                galleryDisplayMoreStep: 3,
+                galleryMaxRows: 5,
+                thumbnailAlignment: "fillWidth",
+                galleryFilterTags: "title",
+                thumbnailLevelUp: true,
+                thumbnailOpenImage: true,
+                galleryResizeAnimation: false,
+                thumbnailLabel:     { display: true, valign: "middle", position: 'overImage', hideIcons: true, titleMultiLine: true },
+                thumbnailHoverEffect2: 'imageBlurOff|labelSlideUp|title_backgroundColor_rgba(255,255,255,0.0)_rgba(0,0,0,0.3)',
+                viewerTheme: "light",
+
+                thumbnailWidth:  254,
+                thumbnailHeight: "auto",
+                itemsBaseURL:    'http://deliver.odai.yale.edu/content/id/',
+                locationHash:    false,
+                fnThumbnailOpen:  customLightBox
+            }); 
+
+        
+        
+
+        
+    }
+
+
+    
+});
+          
+
+
+
+              
+              
+
+
+      </script>
+  </body>
+    
+</html>
