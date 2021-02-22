@@ -1,0 +1,181 @@
+<html>
+  <head>
+    <meta name="viewport" content="user-scalable=no, width=device-width, initial-scale=1, maximum-scale=1">
+
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script>
+
+    <link href="https://cdn.jsdelivr.net/npm/nanogallery2@3/dist/css/nanogallery2.min.css" rel="stylesheet" type="text/css">
+    <link href="style.css" rel="stylesheet" type="text/css">
+      
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/nanogallery2@3/dist/jquery.nanogallery2.min.js"></script>
+      
+  </head>
+  <body>
+
+
+    <div id="wrapper">
+    <div id="searchHeader" class="split split-vertical">
+        <p> Visual Search Gallery | go to <a href="ClickThrough.html">Click-Through Search</a> | prototype 11.2020 by leoimpett |&nbsp;</p>
+        <input id="ngy2search" type="text" value="" placeholder="Search by Title">
+    </div>
+        <div id="noResults"><p>Try a search query!</p></div>
+    <div id="imageBody" class="split split-vertical">
+        
+        <div id="galleryWrapper"> <h2>Search Query</h2> 
+            <div id="loading" class="loader"></div>
+            <div id="my_nanogallery2" class="split split-horizontal"></div></div>
+        
+        <div id="resultsWrapper"> <h2>Search Results</h2> <div id="resultsPane" class="split split-horizontal"> </div>   </div>
+             
+    </div>
+   </div>
+
+      
+      <script>
+      
+var figs = []   
+    
+jQuery(document).ready(function () {
+    
+    
+    console.log("Document Ready")
+    
+
+
+        
+    $.getJSON("LWL.json", function(myjson) {
+        
+        figs = myjson;
+        
+        jQuery("#my_nanogallery2").nanogallery2({
+            items:figs,
+            thumbnailBorderVertical: 3,
+            thumbnailBorderHorizontal: 3,
+            thumbnailLabel: {
+            position: "overImageOnBottom",
+            titleMultiLine: true
+            },      
+            galleryTheme: {
+                thumbnail : { background: '#999', borderColor: '#FFF' }
+              },
+            allowHTMLinData: true,
+            thumbnailDisplayOutsideScreen: false,
+            galleryDisplayMode: "moreButton",
+            galleryPaginationMode: 'numbers',
+            galleryDisplayMoreStep: 4,
+            galleryMaxRows: 3,
+            thumbnailAlignment: "fillWidth",
+            gallerySorting: "random",
+            galleryFilterTags: "title",
+            thumbnailLevelUp: true,
+            thumbnailOpenImage: true,
+            galleryResizeAnimation: false,
+            thumbnailLabel:     { display: true, valign: "middle", position: 'overImage', hideIcons: true, titleMultiLine: true },
+            thumbnailHoverEffect2: 'imageBlurOff|labelSlideUp|title_backgroundColor_rgba(255,255,255,0.0)_rgba(0,0,0,0.3)',
+            viewerTheme: "light",
+            
+            thumbnailWidth:  254,
+            thumbnailHeight: 254,
+            itemsBaseURL:    'http://deliver.odai.yale.edu/content/id/',
+            locationHash:    false,
+            fnThumbnailOpen:  customLightBox
+        });
+        
+        
+        
+console.log("Gallery constructed, displaying")
+$("#loading").css("display","none")
+        
+    })
+        
+  
+    function customLightBox( items ) {
+        
+        
+        var NNids = items[0].customData.NNs
+        
+        var searchResults = NNids.map(x => figs.find(y => y.customData.id === x.toString() )).filter(el => el !== undefined)
+        
+        searchResults.unshift(items[0])
+            
+        
+            jQuery("#resultsPane").nanogallery2("destroy")
+            jQuery("#resultsPane").nanogallery2({
+                items: searchResults.splice(1,33),
+                thumbnailBorderVertical: 10,
+                thumbnailBorderHorizontal: 0,
+                colorScheme: {
+                thumbnail: {
+                background: "#999",
+                borderColor: "#FFF"
+                }
+                },
+                thumbnailLabel: {
+                position: "onBottom",
+                titleMultiLine: true
+                },
+                allowHTMLinData: true,
+                thumbnailDisplayOutsideScreen: false,
+                galleryDisplayMode: "moreButton",
+                galleryPaginationMode: 'numbers',
+                galleryDisplayMoreStep: 5,
+                galleryMaxRows: 3,
+                thumbnailAlignment: "center",
+                galleryFilterTags: "title",
+                thumbnailLevelUp: true,
+                thumbnailOpenImage: true,
+                galleryResizeAnimation: false,
+                thumbnailWidth:  254,
+                thumbnailHeight: 254,
+                itemsBaseURL:    'http://deliver.odai.yale.edu/content/id/',
+                locationHash:    false
+            });   
+            
+          
+        
+
+        
+    }
+
+
+    
+});
+          
+
+             function searchGallery(){
+  $("#my_nanogallery2").nanogallery2('search2', $('#ngy2search').val(), jQuery('#ngy2p').val() );
+          var nOutput = jQuery("#my_nanogallery2").nanogallery2('search2Execute');
+          console.log( nOutput );
+          if(nOutput==0){
+              
+              $("#noResults").css("background-color", "darkred");
+              $("#noResults").css("display", "flex");
+              $("#noResults").children().text(
+                 "'" + $('#ngy2search').val() + "' returned no results. Please try another query. "
+              );
+                        
+                        }else{
+              
+              $("#noResults").css("background-color", "rgba(0,0,0,0.5)");
+              $("#noResults").css("display", "flex");
+              $("#noResults").children().text( 
+                  "'" + $('#ngy2search').val() + "' returned " + nOutput.toString() + " results. "
+              );
+            }
+        if($('#ngy2search').val()==""){
+            $("#noResults").css("display", "none");
+        }
+      }
+              
+              
+          $("#ngy2search").change(searchGallery);       
+            
+          
+              
+              
+
+
+      </script>
+  </body>
+    
+</html>
